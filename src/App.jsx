@@ -17,6 +17,8 @@ export default function App() {
   const [contacts, setContacts] = useState([])
   const [loading, setLoading] = useState(false)
   const [newItemTitle, setNewItemTitle] = useState('')
+  const [newItemEmail, setNewItemEmail] = useState('')
+  const [newItemNotes, setNewItemNotes] = useState('')
   const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0])
   const [selectedImportance, setSelectedImportance] = useState(IMPORTANCE_LEVELS[0])
 
@@ -74,6 +76,8 @@ export default function App() {
       const { error } = await supabase.from('contacts').insert([
         {
           title: newItemTitle,
+          email: newItemEmail,
+          notes: newItemNotes,
           category: selectedCategory,
           importance: selectedImportance,
         },
@@ -81,6 +85,8 @@ export default function App() {
 
       if (error) throw error
       setNewItemTitle('')
+      setNewItemEmail('')
+      setNewItemNotes('')
       setSelectedCategory(CATEGORIES[0])
       setSelectedImportance(IMPORTANCE_LEVELS[0])
     } catch (error) {
@@ -103,7 +109,7 @@ export default function App() {
     return (
       <div className="login-container">
         <div className="login-card">
-          <h1>Contrack Tracker</h1>
+          <h1>Contact Tracker</h1>
           <form onSubmit={handleLogin}>
             <input
               type="password"
@@ -122,7 +128,7 @@ export default function App() {
   return (
     <div className="app-container">
       <header className="app-header">
-        <h1>Contrack Tracker</h1>
+        <h1>Contact Tracker</h1>
         <button className="logout-btn" onClick={() => setIsAuthenticated(false)}>
           Logout
         </button>
@@ -133,9 +139,22 @@ export default function App() {
           <form onSubmit={addContact}>
             <input
               type="text"
-              placeholder="Add new item..."
+              placeholder="Name *"
               value={newItemTitle}
               onChange={(e) => setNewItemTitle(e.target.value)}
+              required
+            />
+            <input
+              type="email"
+              placeholder="Email"
+              value={newItemEmail}
+              onChange={(e) => setNewItemEmail(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Notes"
+              value={newItemNotes}
+              onChange={(e) => setNewItemNotes(e.target.value)}
             />
             <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
               {CATEGORIES.map((cat) => (
@@ -177,7 +196,11 @@ export default function App() {
                         ) : (
                           items.map((item) => (
                             <div key={item.id} className="item">
-                              <span>{item.title}</span>
+                              <div className="item-content">
+                                <div className="item-title">{item.title}</div>
+                                {item.email && <div className="item-email">{item.email}</div>}
+                                {item.notes && <div className="item-notes">{item.notes}</div>}
+                              </div>
                               <button
                                 className="delete-btn"
                                 onClick={() => deleteContact(item.id)}
