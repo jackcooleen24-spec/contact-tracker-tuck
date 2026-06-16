@@ -21,6 +21,7 @@ export default function App() {
   const [newItemNotes, setNewItemNotes] = useState('')
   const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0])
   const [selectedImportance, setSelectedImportance] = useState(IMPORTANCE_LEVELS[0])
+  const [filterCategory, setFilterCategory] = useState('All')
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -98,12 +99,25 @@ export default function App() {
   const deleteContact = async (id) => {
     try {
       const { error } = await supabase.from('contacts').delete().eq('id', id)
-      if (error) throw error
+      if (error) {
+        console.error('Delete error:', error)
+        alert('Failed to delete: ' + error.message)
+        return
+      }
     } catch (error) {
       console.error('Error deleting contact:', error)
       alert('Failed to delete item')
     }
   }
+
+  const getDisplayedContacts = () => {
+    if (filterCategory === 'All') {
+      return contacts
+    }
+    return contacts.filter(c => c.category === filterCategory)
+  }
+
+  const displayedContacts = getDisplayedContacts()
 
   if (!isAuthenticated) {
     return (
@@ -174,49 +188,65 @@ export default function App() {
           </form>
         </div>
 
+        <div className="filter-section">
+          <label>Filter by Category:</label>
+          <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}>
+            <option value="All">All Categories</option>
+            {CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {loading ? (
           <div className="loading">Loading...</div>
         ) : (
           <div className="tracker-grid">
-            {CATEGORIES.map((category) => (
-              <div key={category} className="category-column">
-                <h2>{category}</h2>
-                {IMPORTANCE_LEVELS.map((importance) => {
-                  const items = contacts.filter(
-                    (c) => c.category === category && c.importance === importance
-                  )
-                  return (
-                    <div key={`${category}-${importance}`} className="importance-section">
-                      <h3 className={`importance-header importance-${importance.toLowerCase()}`}>
-                        {importance}
-                      </h3>
-                      <div className="items-list">
-                        {items.length === 0 ? (
-                          <div className="empty-state">No items</div>
-                        ) : (
-                          items.map((item) => (
-                            <div key={item.id} className="item">
-                              <div className="item-content">
-                                <div className="item-title">{item.title}</div>
-                                {item.email && <div className="item-email">{item.email}</div>}
-                                {item.notes && <div className="item-notes">{item.notes}</div>}
+            {CATEGORIES.map((category) => {
+              if (filterCategory !== 'All' && filterCategory !== category) return null
+              
+              return (
+                <div key={category} className="category-column">
+                  <h2>{category}</h2>
+                  {IMPORTANCE_LEVELS.map((importance) => {
+                    const items = displayedContacts.filter(
+                      (c) => c.category === category && c.importance === importance
+                    )
+                    return (
+                      <div key={`${category}-${importance}`} className="importance-section">
+                        <h3 className={`importance-header importance-${importance.toLowerCase()}`}>
+                          {importance}
+                        </h3>
+                        <div className="items-list">
+                          {items.length === 0 ? (
+                            <div className="empty-state">No items</div>
+                          ) : (
+                            items.map((item) => (
+                              <div key={item.id} className="item">
+                                <div className="item-content">
+                                  <div className="item-title">{item.title}</div>
+                                  {item.email && <div className="item-email">{item.email}</div>}
+                                  {item.notes && <div className="item-notes">{item.notes}</div>}
+                                </div>
+                                <button
+                                  className="delete-btn"
+                                  onClick={() => deleteContact(item.id)}
+                                  title="Delete"
+                                >
+                                  ×
+                                </button>
                               </div>
-                              <button
-                                className="delete-btn"
-                                onClick={() => deleteContact(item.id)}
-                                title="Delete"
-                              >
-                                ×
-                              </button>
-                            </div>
-                          ))
-                        )}
+                            ))
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  )
-                })}
-              </div>
-            ))}
+                    )
+                  })}
+                </div>
+              )
+            })}
           </div>
         )}
       </div>
