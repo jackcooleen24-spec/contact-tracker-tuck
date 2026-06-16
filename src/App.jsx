@@ -9,7 +9,7 @@ const APP_PASSWORD = 'richard'
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 const CATEGORIES = ['Connection Request', 'Internal', 'Client', 'Friend', 'Talent Sourcing']
-const IMPORTANCE_LEVELS = ['Low', 'Medium', 'High']
+const IMPORTANCE_LEVELS = ['High', 'Medium', 'Low']
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
