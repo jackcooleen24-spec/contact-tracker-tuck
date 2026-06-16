@@ -158,6 +158,36 @@
   background: #333333;
 }
 
+.filter-section {
+  background: white;
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.filter-section label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.filter-section select {
+  padding: 8px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.filter-section select:focus {
+  outline: none;
+  border-color: #000000;
+}
+
 .loading {
   text-align: center;
   padding: 40px;
@@ -313,6 +343,11 @@
   .add-section input,
   .add-section select {
     width: 100%;
+  }
+
+  .filter-section {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .tracker-grid {
