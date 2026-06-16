@@ -129,7 +129,7 @@
 
 .add-section input {
   flex: 1;
-  min-width: 200px;
+  min-width: 150px;
 }
 
 .add-section select {
@@ -238,17 +238,39 @@
 .item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   padding: 12px;
   background: #f9fafb;
   border-radius: 6px;
   font-size: 13px;
   color: #374151;
   transition: background 0.2s;
+  gap: 8px;
 }
 
 .item:hover {
   background: #f3f4f6;
+}
+
+.item-content {
+  flex: 1;
+}
+
+.item-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.item-email {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.item-notes {
+  font-size: 12px;
+  color: #9ca3af;
+  font-style: italic;
+  margin-top: 4px;
 }
 
 .delete-btn {
@@ -260,6 +282,7 @@
   padding: 0 4px;
   transition: color 0.2s;
   line-height: 1;
+  flex-shrink: 0;
 }
 
 .delete-btn:hover {
